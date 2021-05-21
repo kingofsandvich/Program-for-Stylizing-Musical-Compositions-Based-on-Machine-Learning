@@ -2,16 +2,16 @@ import argparse
 import os
 from model import CycleGAN
 from classifier import Classifier
-# 13 + 1
+# 5
 parser = argparse.ArgumentParser(description='')
 # Dataset
-parser.add_argument('--dataset_A_dir', dest='dataset_A_dir', default='CP_C', help='path of the dataset of domain A')
-parser.add_argument('--dataset_B_dir', dest='dataset_B_dir', default='CP_P', help='path of the dataset of domain B')
+parser.add_argument('--dataset_A_dir', dest='dataset_A_dir', default='JC_J', help='path of the dataset of domain A')
+parser.add_argument('--dataset_B_dir', dest='dataset_B_dir', default='JC_C', help='path of the dataset of domain B')
 
 # Training hyperparams
-parser.add_argument('--epoch', dest='epoch', type=int, default=6, help='# of epoch')
+parser.add_argument('--epoch', dest='epoch', type=int, default=5, help='# of epoch')
 parser.add_argument('--epoch_step', dest='epoch_step', type=int, default=10, help='# of epoch to decay lr')
-parser.add_argument('--batch_size', dest='batch_size', type=int, default=4, help='# images in batch')
+parser.add_argument('--batch_size', dest='batch_size', type=int, default=5, help='# images in batch')
 parser.add_argument('--time_step', dest='time_step', type=int, default=64, help='time step of pianoroll')
 parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=10.0, help='weight on L1 term in objective')
 parser.add_argument('--gamma', dest='gamma', type=float, default=1.0, help='weight of extra discriminators')
@@ -33,7 +33,7 @@ parser.add_argument('--source_dir', dest='source_dir', default='/Users/user/Desk
 parser.add_argument('--log_dir', dest='log_dir', default='./log', help='logs are saved here')
 parser.add_argument('--sigma_c', dest='sigma_c', type=float, default=0.01, help='sigma of gaussian noise of classifiers')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
-parser.add_argument('--checkpoint_name', dest='checkpoint_name', default='CycleGAN_CP', help='name of the checkpoint')
+parser.add_argument('--checkpoint_name', dest='checkpoint_name', default='CycleGAN_JC', help='name of the checkpoint')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./samples', help='sample are saved here')
 parser.add_argument('--save_freq', dest='save_freq', type=int, default=1000, help='save a model every save_freq iterations')
 
@@ -49,7 +49,7 @@ parser.add_argument('--model', dest='model', default='full', help='three differe
 parser.add_argument('--type', dest='type', default='cyclegan', help='cyclegan or classifier')
 
 # Other
-parser.add_argument('--phase', dest='phase', default='prod', help='train, test, prod')
+parser.add_argument('--phase', dest='phase', default='train', help='train, test, prod')
 
 args = parser.parse_args()
 
