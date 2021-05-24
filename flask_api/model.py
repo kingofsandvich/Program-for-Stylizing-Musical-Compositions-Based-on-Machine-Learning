@@ -71,7 +71,6 @@ def init_model(model_name, atob):
     # cur_path = cur_path.parent.absolute()
     args.checkpoint_dir = os.path.join(cur_path, "checkpoint")
 
-    print("CHECKPOINT_DIR", args.checkpoint_dir, "!"*100)
     model = CycleGAN(args)
 
     return model, args
@@ -79,7 +78,6 @@ def init_model(model_name, atob):
 
 def clear_folder(folder):
     for filename in os.listdir(folder):
-        print(os.path.join(folder, filename))
         if os.path.isfile(os.path.join(folder, filename)):
             os.remove(os.path.join(folder, filename))
 

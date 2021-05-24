@@ -136,9 +136,6 @@ class CycleGAN(object):
                                                              self.checkpoint_dir,
                                                              max_to_keep=5)
 
-        # if self.checkpoint_manager.latest_checkpoint:
-        #     self.checkpoint.restore(self.checkpoint_manager.latest_checkpoint)
-        #     print('Latest checkpoint restored!!')
 
     def prod(self, args):
         from legacy.preprocess_midi import get_filenames
@@ -170,10 +167,8 @@ class CycleGAN(object):
 
                 print("source_npy", source_npy.shape)
 
-                # for i in range(n_batches):
                 instr_num = 4
                 instr_num = np.argmax(source_npy.sum(axis=1).sum(axis=1), axis=0)
-                # print('instr_num', np.argmax(source_npy.sum(axis=1).sum(axis=1), axis=0))
                 source_npy = source_npy[instr_num]
 
                 # take only part of pitch range
@@ -182,25 +177,11 @@ class CycleGAN(object):
                 num_batches = ceil(source_npy.shape[0] / args.time_step)
                 zeros = np.zeros([num_batches * args.time_step, source_npy.shape[1]])
                 # complete with zeros to match size (num_batches * time_step)
-                # print(zeros[:source_npy.shape[0]:,:].shape)
                 zeros[:source_npy.shape[0]:,:] = source_npy
                 source_npy = zeros
                 del zeros
                 print(type(source_npy), source_npy.shape)
                 print("Must be: (1, 64, 84, 1) <class 'numpy.ndarray'>")
-
-
-                # source_npy *= 1
-                # sample_npy = np.load(sample_files[idx]) * 1.
-
-                # perform genre transfer with restored model
-
-                # split batches
-                # args.time_step # 'time step of pianoroll'
-                # args.pitch_range # 'pitch range of pianoroll'
-                # args.input_nc # '# of input image channels'
-                # args.output_nc # '# of output image channels'
-
 
                 # save midis
                 origin = source_npy.reshape(1, source_npy.shape[0], source_npy.shape[1], 1)
@@ -209,72 +190,26 @@ class CycleGAN(object):
                                              '{}_{}_{}.mid'.format(midi_name,
                                                                    args.checkpoint_name,
                                                                    args.which_direction))
-                # midi_path_transfer = os.path.join(test_dir_mid, '{}_transfer.mid'.format(idx + 1))
-                # midi_path_cycle = os.path.join(test_dir_mid, '{}_cycle.mid'.format(idx + 1))
 
-
-                processed = []
                 n_batches = origin.shape[1] // (self.time_step)
-                print("n_batches", n_batches)
 
-                # for i in range(n_batches)[:1]:
-                #     print("processing batch:", i)
-                #     if args.which_direction == 'AtoB':
-                #         transfer = self.generator_A2B(origin[:, i * self.time_step : (i + 1) * self.time_step],
-                #                                       training=False)
-                #     else:
-                #         transfer = self.generator_B2A(origin[:, i * self.time_step : (i + 1) * self.time_step],
-                #                                       training=False)
-                #     processed.append(transfer)
-
-                # for i in range(n_batches)[:1]:
-                #     processed.append(origin[:, i * self.time_step : (i + 1) * self.time_step])
-                # processed = np.concatenate(processed, axis=0)
                 processed = origin.reshape(-1,self.time_step, origin.shape[2], origin.shape[3])
                 transfer = self.generator_A2B(processed, training=False)
 
                 transfer = transfer.numpy()
                 transfer = transfer.reshape(1, transfer.shape[0]* transfer.shape[1], transfer.shape[2], transfer.shape[3])
 
-                # physical_devices = tf.config.list_physical_devices('GPU')
-                # try:
-                #     # Disable all GPUS
-                #     tf.config.set_visible_devices([], 'GPU')
-                #     visible_devices = tf.config.get_visible_devices()
-                #     for device in visible_devices:
-                #         assert device.device_type != 'GPU'
-                # except:
-                #     # Invalid device or cannot modify virtual devices once initialized.
-                #     pass
-                # transfer = self.generator_A2B(origin, training=False)
-                # transfer = to_binary(transfer, 0.5)
-
-                # transfer = origin
-                # print("len(processed)", len(processed))
-                # print(type(processed[0]), processed[0].shape)
-                # transfer = np.concatenate(processed, axis=1)
-                # print("transfer", type(transfer), transfer.shape, origin.shape, transfer.dtype, origin.dtype)
-                # print("max val:", str(np.ndarray.max(transfer)))
-
-                # print('midi_info', midi_info)
                 # restore midi from results and save midi file to res directory
                 transfer = to_binary(transfer, 0.5)
 
-                # print("transfer", type(transfer), transfer.shape, origin.shape, transfer.dtype, origin.dtype)
-                # print("max val:", str(np.ndarray.max(transfer)))
-
-                # transfer = origin
                 save_midis(transfer, midi_path_res, tempo=midi_info["tempo"], resolution=16)
-                # save_midis(transfer, midi_path_res, tempo=midi_info["tempo"], beat_resolution=16)
-                # save_midis_params(transfer, midi_path_res, tempo=midi_info["tempo"], resolution=16)
+
                 print('Saved:',midi_path_res)
                 return midi_path_res
             else:
                 print('Error')
                 return None
 
-            # pass
-        # pass
         print("All files converted correctly!")
 
     def train(self, args):
@@ -599,7 +534,6 @@ class CycleGAN(object):
             midi_path_transfer = os.path.join(test_dir_mid, '{}_transfer.mid'.format(idx + 1))
             midi_path_cycle = os.path.join(test_dir_mid, '{}_cycle.mid'.format(idx + 1))
             print(origin.shape, type(origin))
-            break
             if args.which_direction == 'AtoB':
 
                 transfer = self.generator_A2B(origin,

@@ -23,73 +23,6 @@ def softmax_criterion(logits, labels):
 def padding(x, p=3):
     return tf.pad(x, [[0, 0], [p, p], [p, p], [0, 0]], "REFLECT")
 
-# class InstanceNorm(layers.Layer):
-#     def __init__(self, epsilon=1e-5):
-#         super(InstanceNorm, self).__init__()
-#         self.epsilon = epsilon
-#
-#     def call(self, x):
-#         scale = tf.Variable(
-#             initial_value=np.random.normal(1., 0.02, x.shape[-1:]),
-#             trainable=True,
-#             name='SCALE',
-#             dtype=tf.float32
-#         )
-#         offset = tf.Variable(
-#             initial_value=np.zeros(x.shape[-1:]),
-#             trainable=True,
-#             name='OFFSET',
-#             dtype=tf.float32
-#         )
-#         mean, variance = tf.nn.moments(x, axes=[1, 2], keepdims=True)
-#         inv = tf.math.rsqrt(variance + self.epsilon)
-#         normalized = (x - mean) * inv
-#         return scale * normalized + offset
-#
-#
-# class ResNetBlock(layers.Layer):
-#     def __init__(self, dim, k_init, ks=3, s=1):
-#         super(ResNetBlock, self).__init__()
-#         self.dim = dim
-#         self.k_init = k_init
-#         self.ks = ks
-#         self.s = s
-#         self.p = (ks - 1) // 2
-#         # For ks = 3, p = 1
-#         self.padding = "valid"
-#
-#     def call(self, x):
-#         y = layers.Lambda(padding, arguments={"p": self.p}, name="PADDING_1")(x)
-#         # After first padding, (batch * 130 * 130 * 3)
-#
-#         y = layers.Conv2D(
-#             filters=self.dim,
-#             kernel_size=self.ks,
-#             strides=self.s,
-#             padding=self.padding,
-#             kernel_initializer=self.k_init,
-#             use_bias=False
-#         )(y)
-#         y = InstanceNorm()(y)
-#         y = layers.ReLU()(y)
-#         # After first conv2d, (batch * 128 * 128 * 3)
-#
-#         y = layers.Lambda(padding, arguments={"p": self.p}, name="PADDING_2")(y)
-#         # After second padding, (batch * 130 * 130 * 3)
-#
-#         y = layers.Conv2D(
-#             filters=self.dim,
-#             kernel_size=self.ks,
-#             strides=self.s,
-#             padding=self.padding,
-#             kernel_initializer=self.k_init,
-#             use_bias=False
-#         )(y)
-#         y = InstanceNorm()(y)
-#         y = layers.ReLU()(y + x)
-#         # After second conv2d, (batch * 128 * 128 * 3)
-#
-#         return y
 
 
 class InstanceNorm(tf.keras.layers.Layer):
@@ -393,23 +326,3 @@ def build_discriminator_classifier(options, name='Discriminator_Classifier'):
                  outputs=outputs,
                  name=name)
 
-
-# if __name__ == '__main__':
-#
-#     OPTIONS = namedtuple('OPTIONS', 'batch_size '
-#                                     'time_step '
-#                                     'input_nc '
-#                                     'output_nc '
-#                                     'pitch_range '
-#                                     'gf_dim '
-#                                     'df_dim ')
-#     options = OPTIONS._make((128,
-#                              64,
-#                              1,
-#                              1,
-#                              84,
-#                              64,
-#                              64))
-#
-#     model = build_generator(options)
-#     print(model.summary())

@@ -136,9 +136,6 @@ class CycleGAN(object):
                                                              self.checkpoint_dir,
                                                              max_to_keep=5)
 
-        # if self.checkpoint_manager.latest_checkpoint:
-        #     self.checkpoint.restore(self.checkpoint_manager.latest_checkpoint)
-        #     print('Latest checkpoint restored!!')
 
     def prod(self, args):
         from legacy.preprocess_midi import get_filenames
@@ -163,12 +160,10 @@ class CycleGAN(object):
             res = convert(source[idx])
             if res:
                 source_npy, midi_name, midi_info = res
-                print(source_npy)
                 # take piano
                 source_npy = source_npy.stack()
                 instr_num = 4
                 instr_num = np.argmax(source_npy.sum(axis=1).sum(axis=1), axis=0)
-                # print('instr_num', np.argmax(source_npy.sum(axis=1).sum(axis=1), axis=0))
                 source_npy = source_npy[instr_num]
 
                 # take only part of pitch range
@@ -176,26 +171,9 @@ class CycleGAN(object):
                 source_npy = source_npy[:,start_range:start_range + args.pitch_range:]
                 num_batches = ceil(source_npy.shape[0] / args.time_step)
                 zeros = np.zeros([num_batches * args.time_step, source_npy.shape[1]])
-                # complete with zeros to match size (num_batches * time_step)
-                # print(zeros[:source_npy.shape[0]:,:].shape)
                 zeros[:source_npy.shape[0]:,:] = source_npy
                 source_npy = zeros
                 del zeros
-                print(type(source_npy), source_npy.shape)
-                print("Must be: (1, 64, 84, 1) <class 'numpy.ndarray'>")
-
-
-                # source_npy *= 1
-                # sample_npy = np.load(sample_files[idx]) * 1.
-
-                # perform genre transfer with restored model
-
-                # split batches
-                args.time_step # 'time step of pianoroll'
-                args.pitch_range # 'pitch range of pianoroll'
-                args.input_nc # '# of input image channels'
-                args.output_nc # '# of output image channels'
-
 
                 # save midis
                 origin = source_npy.reshape(1, source_npy.shape[0], source_npy.shape[1], 1)
@@ -204,8 +182,6 @@ class CycleGAN(object):
                                              '{}_{}_{}.mid'.format(midi_name,
                                                                    args.checkpoint_name,
                                                                    args.which_direction))
-                # midi_path_transfer = os.path.join(test_dir_mid, '{}_transfer.mid'.format(idx + 1))
-                # midi_path_cycle = os.path.join(test_dir_mid, '{}_cycle.mid'.format(idx + 1))
 
                 if args.which_direction == 'AtoB':
                     transfer = self.generator_A2B(origin,
@@ -214,7 +190,6 @@ class CycleGAN(object):
                     transfer = self.generator_B2A(origin,
                                                   training=False)
 
-                # print('midi_info', midi_info)
                 # restore midi from results and save midi file to res directory
                 save_midis(transfer, midi_path_res, midi_info=midi_info)
                 print('Saved:',midi_path_res)
@@ -359,8 +334,6 @@ class CycleGAN(object):
                     real_mixed = np.array(batch_samples_mixed).astype(np.float32)
 
                     with tf.GradientTape(persistent=True) as gen_tape, tf.GradientTape(persistent=True) as disc_tape:
-                        # print(real_A)
-                        # print(real_A.shape)
                         fake_B = self.generator_A2B(real_A,
                                                     training=True)
                         cycle_A = self.generator_B2A(fake_B,
@@ -546,7 +519,6 @@ class CycleGAN(object):
             midi_path_transfer = os.path.join(test_dir_mid, '{}_transfer.mid'.format(idx + 1))
             midi_path_cycle = os.path.join(test_dir_mid, '{}_cycle.mid'.format(idx + 1))
             print(origin.shape, type(origin))
-            break
             if args.which_direction == 'AtoB':
 
                 transfer = self.generator_A2B(origin,

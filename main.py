@@ -2,7 +2,7 @@ import argparse
 import os
 from model import CycleGAN
 from classifier import Classifier
-# 10 + 5
+# 10 + 5 + 10
 parser = argparse.ArgumentParser(description='')
 # Dataset
 parser.add_argument('--dataset_A_dir', dest='dataset_A_dir', default='JC_J', help='path of the dataset of domain A')
@@ -64,7 +64,6 @@ if __name__ == '__main__':
     if not os.path.exists(args.res_dir):
         os.makedirs(args.res_dir)
 
-    # print(args)
     if args.type == 'cyclegan':
         model = CycleGAN(args)
         if args.phase == "prod":

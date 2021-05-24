@@ -5,19 +5,6 @@ import tensorflow as tf
 
 def prepare_dataset():
     processed_dir = None
-
-    # dataset_dir = r'D:\DIPLOMA\dataset\big midi\nesmdb\nesmdb_midi'
-    # texts_dir = r'D:\DIPLOMA\dataset\big midi\nesmdb\texts'
-    #
-    # dataset_dir = r'D:\DIPLOMA\dataset\big midi\maestro\maestro-v3.0.0'
-    # texts_dir = r'D:\DIPLOMA\dataset\big midi\maestro\texts'
-    #
-    # dataset_dir = r"D:\DIPLOMA\dataset\big midi\Lakh\lmd_full"
-    # texts_dir = r"D:\DIPLOMA\dataset\big midi\Lakh\texts"
-    #
-    # dataset_dir = r"D:\DIPLOMA\dataset\big midi\Big_Data_Set\bigds"
-    # texts_dir = r"D:\DIPLOMA\dataset\big midi\Big_Data_Set\texts"
-    #
     dataset_dir = r"D:\DIPLOMA\dataset\genre\dss\pop"
     texts_dir = r"D:\DIPLOMA\dataset\genre\texts\pop"
     spark_preprocess(num=-1,
@@ -47,21 +34,6 @@ def prepare_dataset():
                      texts_dir=texts_dir)
 
     vocab_file = r"D:\DIPLOMA\dataset\vocab.json"
-
-    # texts_dir = [
-    # r"D:\DIPLOMA\dataset\big midi\nesmdb\texts",
-    # r"D:\DIPLOMA\dataset\big midi\Big_Data_Set\texts",
-    # r"D:\DIPLOMA\dataset\big midi\Lakh\texts",
-    # r"D:\DIPLOMA\dataset\big midi\maestro\texts"
-    #     r"D:\DIPLOMA\dataset\genre\CycleGAN DS\Classic"
-    # ]
-
-    # without mlm or sop
-    # pure_ds = r"D:/DIPLOMA/dataset/big midi/tfds/pure_dataset"
-    # sop_ds = r"D:/DIPLOMA/dataset/big midi/tfds/sop_dataset"
-    # mlm_ds = r"D:\DIPLOMA\dataset\big midi\Big_Data_Set\tfds\mlm_dataset"
-    # mlm_ds = r"D:\DIPLOMA\dataset\big midi\Lakh\tfds\mlm_dataset"
-    # mlm_ds = r"D:\DIPLOMA\dataset\big midi\tfds\mlm_dataset"
 
     max_len = 128
 
@@ -110,27 +82,6 @@ def prepare_dataset():
                  batch_size=150,
                  sop=False,
                  mlm=False)
-    # dataset = \
-    # make_dataset(res_path=pure_ds,
-    #                        nparts=150,
-    #                        vocab_file=vocab_file,
-    #                        data_dirs=texts_dir,
-    #                        max_len=max_len,
-    #                        batch_size=150,
-    #                        sop=False,
-    #                        mlm=False)
-    #
-    # make_dataset(res_path=sop_ds,
-    #              nparts=150,
-    #              vocab_file=vocab_file,
-    #              data_dirs=texts_dir,
-    #              max_len=max_len,
-    #              batch_size=150,
-    #              sop=True,
-    #              mlm=False)
-    # save_labeled_dataset(dataset, mlm_ds)
-    # print(dataset)
-    # del dataset
 
 
 def train_cyclegan():
